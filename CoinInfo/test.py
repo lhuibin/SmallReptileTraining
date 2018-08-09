@@ -7,6 +7,7 @@ import os
 import random
 from bs4 import BeautifulSoup
 from urllib.request import urlretrieve
+import pymysql
 
 ua_list = [
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv2.0.1) Gecko/20100101 Firefox/4.0.1",
@@ -28,12 +29,22 @@ def get_data(url,user_agent):
 	soup_pre=BeautifulSoup(response,"lxml")
 	return soup_pre
 
-# 获取币种列表
+
+coin_list = []
+# 自动获取币种列表
+
 url_index='https://coinmarketcap.com/'
 data_coin = get_data(url_index, user_agent)
-coin_list = []
 for i in data_coin.find_all(class_='currency-name-container link-secondary'):
 	coin_list.append(i.get_text()) # 需要抓取href链接，然后取中间的名字
+
+
+# 打开数据库连接
+db = pymysql.connect("localhost","root","lhuibin","test" )
+ 
+# 使用 cursor() 方法创建一个游标对象 cursor
+cursor = db.cursor()
+
 
 # 构造URL，可以利用list创建待查询的币种
 for Coin_Name in coin_list:
@@ -46,20 +57,70 @@ for Coin_Name in coin_list:
 	# 抓取币种信息
 	data = get_data(Coin_url, user_agent)
 	for i in data.find_all(class_='h2 text-semi-bold details-panel-item--price__value'):
-		coin_price=i.get_text() #币价
+		coin_price=float(i.get_text()) #币价
 	for i in data.find_all(class_='label label-success'):
-		coin_rank=i.get_text().split(' ')[-1] #市值排名,不能抓取最后一个字符
+		coin_rank=int(i.get_text().split(' ')[-1])#市值排名,不能抓取最后一个字符
 	for i in data.find_all(class_='details-panel-item--marketcap-stats flex-container'):
-		coin_MarketCap=re.search(r'data-usd="'+'\d+', str(i)).group().split('"')[-1] # 流通市值,比特币的值是科学计数法，会出现获取错误
+		coin_MarketCap=int(re.search(r'data-usd="'+'\d+', str(i)).group().split('"')[-1]) # 流通市值,比特币的值是科学计数法，会出现获取错误
 	for i in data.find_all(class_='details-panel-item--marketcap-stats flex-container'):
-		coin_Volume24h=re.search(r'data-currency-volume="" data-usd="'+'\d+', str(i)).group().split('"')[-1] # 24H交易量
+		coin_Volume24h=int(re.search(r'data-currency-volume="" data-usd="'+'\d+', str(i)).group().split('"')[-1]) # 24H交易量
 	for i in data.find_all(class_='details-panel-item--marketcap-stats flex-container'):
-		coin_CirculatingSupply=re.search(r'data-format-supply="" data-format-value="'+'\d+', str(i)).group().split('"')[-1] # 流通量
-	print('币名:'+Coin_Name+' | ','排名：'+coin_rank+' | ','币价:'+coin_price+' | ','交易量：'+coin_Volume24h+' | ','市值:'+coin_MarketCap+' | ','流通量：'+coin_CirculatingSupply+' | ')
+		coin_CirculatingSupply=int(re.search(r'data-format-supply="" data-format-value="'+'\d+', str(i)).group().split('"')[-1]) # 流通量
+	print('已获取：',Coin_Name)
 
+
+	# SQL 查询语句
+	sql = "SELECT * FROM COIN \
+	       WHERE Coin_Name = '%s'" % Coin_Name
+	try:
+		# 执行SQL语句
+		cursor.execute(sql)
+		# 获取所有记录列表
+		result = cursor.fetchone()
+		if result==None:
+		# SQL 插入语句
+			sql = """INSERT INTO COIN VALUES ('%s','%s', '%s', '%s', '%s', '%s')"""%(Coin_Name,coin_rank,coin_price,coin_Volume24h,coin_MarketCap,coin_CirculatingSupply)
+			update_info="增加"
+		else:
+		# SQL 更新语句
+			sql = "UPDATE COIN SET coin_rank='%s',coin_price='%s',coin_Volume24h='%s',coin_MarketCap='%s',coin_CirculatingSupply='%s' where Coin_Name='%s'" %(coin_rank,coin_price,coin_Volume24h,coin_MarketCap,coin_CirculatingSupply,Coin_Name)
+			update_info="更新"
+	except:
+	   print ("Error: unable to fetch data")
+
+
+	try:
+	   # 执行sql语句coin
+	   cursor.execute(sql)
+	   # 提交到数据库执行
+	   db.commit()
+	   print(Coin_Name,update_info,'成功')
+	except:
+	   # 如果发生错误则回滚
+	   db.rollback()
+	   print(Coin_Name,update_info,'失败')
+	   
 	time.sleep(3)
 
 
+ 
+# 使用 execute() 方法执行 SQL，如果表存在则删除
+#cursor.execute("DROP TABLE IF EXISTS TEST")
+ 
+# 使用预处理语句创建表
+'''
+sql = """CREATE TABLE TEST (
+         Coin_Name  CHAR(20) NOT NULL,
+         LAST_NAME  CHAR(20),
+         lhuibin INT,  
+         SEX CHAR(1),
+         INCOME FLOAT )"""
+ 
+cursor.execute(sql)
+'''
+
+# 关闭数据库连接
+db.close()
 
 # 下一步把抓取的信息存入mysql
 
