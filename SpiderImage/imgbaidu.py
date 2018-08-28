@@ -53,5 +53,6 @@ def Download(url,filename,filepath):
 
 #下载的主函数
 if __name__ =='__main__':
-    for i in range(20,21):
-      Search('老虎','data/bibi',i)    #这里可以方便的下载指定的页数
+    for i in range(1,2):
+      Search('汽修店','data/bibi',i)    #这里可以方便的下载指定的页数
+
