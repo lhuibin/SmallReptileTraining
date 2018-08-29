@@ -1,6 +1,9 @@
 # coding=utf-8
 """根据搜索词下载百度图片
-	教程来自于：https://blog.csdn.net/qq_37389133/article/details/79327948  """
+	教程来自于：https://blog.csdn.net/qq_37389133/article/details/79327948  """# 问题只会下载一页，出在页码列表不对，每次加载30张，页码应该是30,60,90网上加
+
+
+
 import requests
 from urllib.request import urlretrieve
 import os
@@ -53,5 +56,6 @@ def Download(url,filename,filepath):
 
 #下载的主函数
 if __name__ =='__main__':
-    for i in range(20,21):
-      Search('老虎','data/bibi',i)    #这里可以方便的下载指定的页数
+    for i in range(30,120,30): #这里可以方便的下载的图片数，每次json返回30张
+      Search('汽修店','data/bibi',i)    
+
