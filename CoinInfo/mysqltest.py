@@ -28,7 +28,7 @@ def get_data(url,user_agent):
 	response=request.text
 	soup_pre=BeautifulSoup(response,"lxml")
 	return soup_pre
-coin_list = ['bitcoin', 'bitcoin-cash', 'decred', 'nano', 'litecoin', 'bitcoin-gold', 'bitcoin-diamond', 'dogecoin', 'dash', 'monero', 'zcash', 'verge', 'particl', 'zcoin', 'ethereum', 'eos', 'cardano', 'tezos', 'bytom', 'zilliqa', 'storiqa', 'syscoin', 'cybermiles', 'neo', 'icon', 'vite', 'loopring', 'loopring-neo', 'algorand', 'ontology', 'arcblock', 'wanchain', 'pallet', '0x', 'cybereits', 'loom-network', 'bluzelle', 'fabcoin', 'cortex', 'hitchain', 'sonm', 'poet', 'decentraland', 'scryinfo', 'credits', 'jibrel-network', 'investdigital', 'baic', '0xcert', 'dock', 'libra-credit', 'smartmesh', 'rightmesh', 'blockmesh','funfair']
+coin_list = ['bitcoin', 'bitcoin-cash', 'decred', 'nano', 'litecoin', 'bitcoin-gold', 'bitcoin-diamond', 'dogecoin', 'dash', 'monero', 'zcash', 'verge', 'particl', 'zcoin', 'ethereum', 'eos', 'cardano', 'tezos', 'bytom', 'zilliqa', 'storiqa', 'syscoin', 'cybermiles', 'neo', 'icon', 'vite', 'loopring', 'loopring-neo', 'algorand', 'ontology', 'arcblock', 'wanchain', 'pallet', '0x', 'cybereits', 'loom-network', 'bluzelle', 'fabcoin', 'cortex', 'hitchain', 'sonm', 'poet', 'decentraland', 'scryinfo', 'credits', 'jibrel-network', 'investdigital', 'baic', '0xcert', 'dock', 'libra-credit', 'smartmesh', 'rightmesh', 'blockmesh','funfair','aelf']
 
 #coin_list = ['bitcoin', 'bitcoin-cash', 'decred']
 # 自动获取币种列表
@@ -80,7 +80,7 @@ for Coin_Name in coin_list:
 	
 	coin_MarketCap = coin_price * coin_CirculatingSupply
 	coin_TotalCap = coin_price * coin_TotalSupply
-	coin_CirculatingRatio = coin_CirculatingSupply/coin_TotalSupply*100
+	coin_CirculatingRatio = coin_CirculatingSupply/coin_TotalSupply
 
 	# SQL 查询语句
 	sql = "SELECT * FROM COIN \
