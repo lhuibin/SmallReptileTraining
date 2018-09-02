@@ -56,6 +56,7 @@ def Download(url,filename,filepath):
 
 #下载的主函数
 if __name__ =='__main__':
-    for i in range(30,120,30): #这里可以方便的下载的图片数，每次json返回30张
-      Search('汽修店','data/bibi',i)    
+    for i in range(30,3000,30): #这里可以方便的下载的图片数，每次json返回30张
+      print(i)
+      Search('汽车门店','M:/data/qixiu',i)    
 
