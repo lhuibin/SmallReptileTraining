@@ -62,8 +62,11 @@ for Coin_Name in coin_list:
 	coin_CirculatingSupply = s.xpath('/html/body/div[2]/div/div[1]/div[3]/div[2]/div[3]/div/span/@data-format-value')[0] # 流通量
 	print(coin_CirculatingSupply)
 
-	coin_MaxSupply = s.xpath('/html/body/div[2]/div/div[1]/div[3]/div[2]/div[4]/div/span/@data-format-value')[0] # 总量
-	print(coin_MaxSupply)
+	try:#防止没有数据时，出错
+		coin_MaxSupply = s.xpath('/html/body/div[2]/div/div[1]/div[3]/div[2]/div[4]/div/span/@data-format-value')[0] # 总量
+		print(coin_MaxSupply)
+	except:
+		print(Coin_Name+'没有总量数据')
 '''
 	
 	# SQL 查询总量

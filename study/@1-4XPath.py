@@ -1,26 +1,22 @@
 # xpath用法整理：https://blog.csdn.net/u013332124/article/details/80621638
+import requests,io,sys,pandas
 
 
-import requests
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='gb18030') #改变标准输出的默认编码
+
+
 from lxml import etree
 
-url = 'https://book.douban.com/subject/1084336/comments/'
-r = requests.get(url).text
+url = 'http://sz.xiaozhu.com/'
 
-s = etree.HTML(r)
-#从浏览器复制第一条评论的Xpath
-for i in s.xpath("//*[@class='comment-content']/span"):
-	print(i.text+"|")
-'''
-//*[@id="comments"]/ul/li[5]/div[2]/p
-#从浏览器复制第二条评论的Xpath
-print(s.xpath('//*[@id="comments"]/ul/li[2]/div[2]/p/text()'))
-#从浏览器复制第三条评论的Xpath
-print(s.xpath('//*[@id=“comments”]/ul/li[3]/div[2]/p/text()'))
+r = requests.get(url).text#使用requests获取数据
 
-#掌握规律，删除li[]的括号，获取全部短评
-print(s.xpath('//*[@id=“comments”]/ul/li/div[2]/p/text()'))
+s = etree.HTML(r)#解析html数据
 
-#手写Xpath获取全部短评
-print(s.xpath('//div[@class="comment"]/p/text()'))
-'''
+title = s.xpath('//*[@id="page_list"]/ul/li/div[2]/div/a/span/text()')#打印短租标题
+
+price = s.xpath('//*[@id="page_list"]/ul/li/div[2]/span[1]/i/text()')#打印短租价格
+
+latlng = s.xpath('//*[@id="page_list"]/ul/li/@latlng')#打印短租经纬度
+
+print(list(i for i in zip(title,price,latlng)))
