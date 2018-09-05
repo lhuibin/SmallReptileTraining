@@ -1,4 +1,6 @@
-
+import io,sys
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='gb18030') #改变标准输出的默认编码
+'''
 import requests
 from lxml import etree
 
@@ -7,19 +9,19 @@ r = requests.get(url).text
 
 s = etree.HTML(r)
 file = s.xpath('//*[@id="comments"]/ul/li/div[2]/p/span/text()')
-
+'''
 '''#使用with open()新建对象 写入数据
 with open('pinglun.txt', 'a', encoding='utf-8') as f:#使用with open()新建对象f
 	for i in file:
 		print(i)
 		f.write(i)#写入数据，文件保存在当前工作目录'''
 
-
+'''
 # 使用pandas 保存数据
 import pandas as pd
 df = pd.DataFrame(file)
 df.to_excel('pinglun.xlsx')
-
+'''
 
 #import os
 #os.getcwd()#得到当前工作目录
@@ -43,3 +45,19 @@ df.to_csv('numpppy.csv')
 #pd.read_excel('文件名.xlsx', 'Sheet1', index_col=None, na_values=['NA']) #从excel中读取数据
 '''
 
+import requests
+import pandas as pd
+from lxml import etree
+
+urls = ['https://book.douban.com/subject/1084336/comments/hot?p={}'.format(str(i)) for i in range(1,6)]
+print(urls)
+pinglun = []
+for url in urls:
+	r = requests.get(url).text
+	s = etree.HTML(r)
+	file = s.xpath('//*[@id="comments"]/ul/li/div[2]/p/span/text()')
+	pinglun = pinglun + file
+
+print(pinglun)
+df = pd.DataFrame(pinglun)
+df.to_csv('pinglun.csv')

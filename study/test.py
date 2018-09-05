@@ -1,4 +1,3 @@
-a = ['A','B','C']
-b = [1,2,3]
 
-
+urls=['{}'.format('1')]
+print(urls)
